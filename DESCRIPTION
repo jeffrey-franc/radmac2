@@ -1,8 +1,10 @@
 Package: radmac2
-Title: What the Package Does (one line, title case)
+Title: Statistical Analysis for SurgeSim
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-Depends: R (>= 3.2.4)
-License: What license is it under?
+Authors@R: person("Jeffrey", "Franc", email = "jef@medstatstudio.com", role = c("aut", "cre"))
+Description: Provides statistical analysis and control charts for SurgeSim
+Depends:
+    R (>= 3.2.4)
+License: GPL-2
 LazyData: true
+RoxygenNote: 5.0.1
