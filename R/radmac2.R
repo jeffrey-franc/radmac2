@@ -2,30 +2,30 @@ los<-function(x,...){
     UseMethod('los');
 }
 
-
-
-
-
-
-los<-function(db='medstat1_surgesim',sim,protocol){
-    #' Calculate length of stay benchmarks for SurgeSim
+   #' Calculate length of stay benchmarks for SurgeSim
     #'
     #' @param db Main Simulation database containing datamine
     #' @param sim Simulation database
     #' @param protocol Simulation protocol for comparison
     #' @examples
-    #' z<-los(protocol='Geyserville',sim='unmert');
+  #' z<-los(protocol='Geyserville',sim='unmert');
+  #' @export
+los<-function(db='medstat1_surgesim',sim,protocol){
+
     surgesimcalc(db=db,sim=sim,protocol=protocol,rtype='los');
 }
 
-pv<-function(db='medstat1_surgesim',sim,protocol){
-    #' Calculate patient volume stay benchmarks for SurgeSim
+
+ #' Calculate patient volume stay benchmarks for SurgeSim
     #'
     #' @param db Main Simulation database containing datamine
     #' @param sim Simulation database
     #' @param protocol Simulation protocol for comparison
     #' @examples
-    #' z<-pv(protocol='Geyserville',sim='unmert');
+  #' z<-pv(protocol='Geyserville',sim='unmert');
+  #' @export
+pv<-function(db='medstat1_surgesim',sim,protocol){
+
     surgesimcalc(db=db,sim=sim,protocol=protocol,rtype='pv');
 }
 
@@ -142,6 +142,7 @@ sqldispo<-"select Simulation,Protocol,DispoTime-Time_Runtime AS dispo FROM datam
 
 }
 
+#' @export
 plot.los <- function(z,color=TRUE){
     maintitle<-paste('SurgeSim Length of Stay Markers for',z$simulation);
 
@@ -162,6 +163,7 @@ plot.los <- function(z,color=TRUE){
 
 }
 
+#' @export
 plot.pv <- function(z,color=TRUE){
     maintitle<-paste('SurgeSim Patient Volume Markers for',z$simulation);
 
@@ -186,7 +188,7 @@ plot.pv <- function(z,color=TRUE){
 
 
 
-function(sql,db='medstat1_surgesim') {
+mydf<-function(sql,db='medstat1_surgesim') {
   library(RMySQL);
   con<-dbConnect(MySQL(),user=***REMOVED***,password=***REMOVED***,dbname=db,host='localhost');
   x<-dbGetQuery(con,sql);
