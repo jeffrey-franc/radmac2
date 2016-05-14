@@ -1,0 +1,6 @@
+los<-function(protocol){
+    sqllos<-"select Simulation,Protocol,RegTime-Time_Runtime AS triage FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where RegTime IS NOT NULL && RegTime-Time_Runtime < 3600 && Protocol = ' ";
+    endquote<-"'";
+    sqllos<-paste(sqllos,protocol,endquote);
+    echo sqllos;
+}
