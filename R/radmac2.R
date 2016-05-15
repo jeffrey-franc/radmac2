@@ -52,25 +52,26 @@ bench<-function(db='medstat1_surgesim',protocol){
 
 surgesimcalc<-function(db='medstat1_surgesim',sim,protocol,rtype){
 
+
 if(!(is.null(sim))) {
 # This Sim
-    sqlstriage<-"SELECT RegTime-Time_Runtime AS triage FROM runtimes where RegTime-Time_Runtime < 3600 and RegTime-Time_Runtime > 0 && RegTime IS NOT NULL";
+    sqlstriage<-"SELECT RegTime-Time_Runtime AS triage FROM runtimes where RegTime-Time_Runtime < 3600 and RegTime-Time_Runtime > 0 && Time_Min > 0 && RegTime IS NOT NULL";
     striage_df <- mydf(sql=sqlstriage,db=sim);
     triage<-median(striage_df$triage);
     ntriage<-length(striage_df$triage);
 
 
-     sqlsroom<-"SELECT RoomTime-Time_Runtime AS room FROM runtimes where RoomTime-Time_Runtime < 3600 && RoomTime-Time_Runtime > 0 && RoomTime IS NOT NULL";
+     sqlsroom<-"SELECT RoomTime-Time_Runtime AS room FROM runtimes where RoomTime-Time_Runtime < 3600 && RoomTime-Time_Runtime > 0 && Time_Min > 0 && RoomTime IS NOT NULL";
     sroom_df <- mydf(sql=sqlsroom,db=sim);
     room<-median(sroom_df$room);
     nroom<-length(sroom_df$room);
 
-sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtime < 3600 && MDTime-Time_Runtime > 0 && MDTime IS NOT NULL";
+sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtime < 3600 && MDTime-Time_Runtime > 0 && Time_Min > 0 && MDTime IS NOT NULL";
     smd_df <- mydf(sql=sqlsmd,db=sim);
     md<-median(smd_df$md);
     nmd<-length(smd_df$md);
 
-    sqlsdispo<-"SELECT DispoTime-Time_Runtime AS dispo FROM runtimes where DispoTime-Time_Runtime < 3600 && DispoTime-Time_Runtime > 0 && DispoTime IS NOT NULL";
+    sqlsdispo<-"SELECT DispoTime-Time_Runtime AS dispo FROM runtimes where DispoTime-Time_Runtime < 3600 && DispoTime-Time_Runtime > 0 && Time_Min > 0 && DispoTime IS NOT NULL";
     sdispo_df <- mydf(sql=sqlsdispo,db=sim);
     dispo<-median(sdispo_df$dispo);
     ndispo<-length(sdispo_df$dispo);
@@ -95,7 +96,7 @@ sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtim
     ntriage_q25 <- as.numeric(quantile(ntriage))[2];
 
     #Room
-     sqlroom<-"select Simulation,Protocol,RoomTime-Time_Runtime AS room FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where RoomTime IS NOT NULL && RoomTime-Time_Runtime < 3600 && RoomTime-Time_Runtime>0 &&Protocol = '";
+     sqlroom<-"select Simulation,Protocol,RoomTime-Time_Runtime AS room FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where RoomTime IS NOT NULL && RoomTime-Time_Runtime < 3600 && RoomTime-Time_Runtime>0 && Time_Min > 0 && Protocol = '";
     endquote<-"'";
     sqlroom<-paste(sqlroom,protocol,endquote,sep='');
     room_df <- mydf(sql=sqlroom, db=db);
@@ -106,7 +107,7 @@ sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtim
     nroom_q25 <- as.numeric(quantile(nroom))[2];
 
     #MD
-sqlmd<-"select Simulation,Protocol,MDTime-Time_Runtime AS md FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where MDTime IS NOT NULL && MDTime-Time_Runtime < 3600 && MDTime-Time_Runtime > 0 && Protocol = '";
+sqlmd<-"select Simulation,Protocol,MDTime-Time_Runtime AS md FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where MDTime IS NOT NULL && MDTime-Time_Runtime < 3600 && MDTime-Time_Runtime > 0 && Time_Min > 0 && Protocol = '";
     endquote<-"'";
     sqlmd<-paste(sqlmd,protocol,endquote,sep='');
     md_df <- mydf(sql=sqlmd, db=db);
@@ -118,7 +119,7 @@ sqlmd<-"select Simulation,Protocol,MDTime-Time_Runtime AS md FROM datamine RIGHT
 
 
     #dispo
-sqldispo<-"select Simulation,Protocol,DispoTime-Time_Runtime AS dispo FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where DispoTime IS NOT NULL && DispoTime-Time_Runtime < 3600 && DispoTime-Time_Runtime > 0 &&Protocol = '";
+sqldispo<-"select Simulation,Protocol,DispoTime-Time_Runtime AS dispo FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where DispoTime IS NOT NULL && DispoTime-Time_Runtime < 3600 && DispoTime-Time_Runtime > 0 && Time_Min > 0 && Protocol = '";
     endquote<-"'";
     sqldispo<-paste(sqldispo,protocol,endquote,sep='');
     dispo_df <- mydf(sql=sqldispo, db=db);
@@ -138,34 +139,30 @@ sqldispo<-"select Simulation,Protocol,DispoTime-Time_Runtime AS dispo FROM datam
     benchmarks<-list(triage=triage_df$triage,room=room_df$room,md=md_df$md,dispo=dispo_df$dispo);
 
 #returns
-    z<-(list(simulation=sim,
+
+  if(rtype=='los') {
+     z<-(list(simulation=sim,
              medians=medians,
              q75=q75,
              values=values
-             ));
+              ));
+     class(z)<-'los';
+     return(z);
 
-    z2<-(list(simulation=sim,
+  } else if (rtype=='pv') {
+      z2<-(list(simulation=sim,
               medians=nmedians,
               q25=nq25,
               values=nvalues
-             ));
-
-    z3<-list(protocol=protocol,
+                ));
+       class(z2)<-'pv';
+       return(z2);
+  } else {
+     z3<-list(protocol=protocol,
              benchmarks=benchmarks
              );
-
-
-
-   class(z)<-'los';
-    class(z2)<-'pv';
-    class(z3)<-'bench';
-
-    if(rtype=='los') {
-        return(z);
-    } else if (rtype=='pv') {
-        return(z2);
-    } else {
-        return(z3);
+     class(z3)<-'bench';
+     return(z3);
     }
 
 }
