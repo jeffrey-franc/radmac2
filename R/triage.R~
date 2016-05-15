@@ -1,0 +1,4 @@
+
+triage<-function(x,...){
+    UseMethod(triage);
+}

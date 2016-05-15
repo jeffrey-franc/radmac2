@@ -2,6 +2,10 @@ los<-function(x,...){
     UseMethod('los');
 }
 
+pv<-function(x,...){
+    UseMethod('pv');
+}
+
    #' Calculate length of stay benchmarks for SurgeSim
     #'
     #' @param db Main Simulation database containing datamine
