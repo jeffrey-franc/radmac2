@@ -2,21 +2,21 @@
 % Please edit documentation in R/radmac2.R
 \name{pv}
 \alias{pv}
-\title{Calculate patient volume stay benchmarks for SurgeSim}
+\title{Calculate patient volume benchmarks for SurgeSim}
 \usage{
 pv(db = "medstat1_surgesim", sim, protocol)
 }
 \arguments{
-\item{db}{Main Simulation database containing datamine}
+\item{db}{Simulation database containing datamine}
 
-\item{sim}{Simulation database}
+\item{sim}{Simulation group database}
 
 \item{protocol}{Simulation protocol for comparison}
 }
 \description{
-Calculate patient volume stay benchmarks for SurgeSim
+Calculate patient volume benchmarks for SurgeSim
 }
 \examples{
-z<-pv(protocol='Geyserville',sim='unmert');
+z<-pv(protocol='Geyserville',sim='emdm2016a');
 }
 

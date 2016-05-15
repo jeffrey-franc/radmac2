@@ -6,13 +6,19 @@ pv<-function(x,...){
     UseMethod('pv');
 }
 
-   #' Calculate length of stay benchmarks for SurgeSim
+bench<-function(x,...){
+    UseMethod('bench');
+}
+
+
+
+   #' Calculate length of stay for SurgeSim Simulation Group
     #'
-    #' @param db Main Simulation database containing datamine
-    #' @param sim Simulation database
+    #' @param db Simulation database containing datamine
+    #' @param sim Simulation group database
     #' @param protocol Simulation protocol for comparison
     #' @examples
-  #' z<-los(protocol='Geyserville',sim='unmert');
+  #' z<-los(protocol='Geyserville',sim='emdm2016a');
   #' @export
 los<-function(db='medstat1_surgesim',sim,protocol){
 
@@ -20,40 +26,51 @@ los<-function(db='medstat1_surgesim',sim,protocol){
 }
 
 
- #' Calculate patient volume stay benchmarks for SurgeSim
+ #' Calculate patient volume benchmarks for SurgeSim
     #'
-    #' @param db Main Simulation database containing datamine
-    #' @param sim Simulation database
+    #' @param db Simulation database containing datamine
+    #' @param sim Simulation group database
     #' @param protocol Simulation protocol for comparison
     #' @examples
-  #' z<-pv(protocol='Geyserville',sim='unmert');
+  #' z<-pv(protocol='Geyserville',sim='emdm2016a');
   #' @export
 pv<-function(db='medstat1_surgesim',sim,protocol){
-
     surgesimcalc(db=db,sim=sim,protocol=protocol,rtype='pv');
+}
+
+#' Calculate patient volume stay benchmarks for SurgeSim
+    #'
+    #' @param db Simulation database containing datamine
+    #' @param protocol Simulation protocol for benchmarks
+    #' @examples
+  #' z<-bench(protocol='Geyserville');
+  #' @export
+bench<-function(db='medstat1_surgesim',protocol){
+    surgesimcalc(db=db,sim=NULL,protocol=protocol,rtype='bench');
 }
 
 
 surgesimcalc<-function(db='medstat1_surgesim',sim,protocol,rtype){
 
+if(!(is.null(sim))) {
 # This Sim
-    sqlstriage<-"SELECT RegTime-Time_Runtime AS triage FROM runtimes where RegTime-Time_Runtime < 3600 and RegTime IS NOT NULL";
+    sqlstriage<-"SELECT RegTime-Time_Runtime AS triage FROM runtimes where RegTime-Time_Runtime < 3600 and RegTime-Time_Runtime > 0 && RegTime IS NOT NULL";
     striage_df <- mydf(sql=sqlstriage,db=sim);
     triage<-median(striage_df$triage);
     ntriage<-length(striage_df$triage);
 
 
-     sqlsroom<-"SELECT RoomTime-Time_Runtime AS room FROM runtimes where RoomTime-Time_Runtime < 3600 and RoomTime IS NOT NULL";
+     sqlsroom<-"SELECT RoomTime-Time_Runtime AS room FROM runtimes where RoomTime-Time_Runtime < 3600 && RoomTime-Time_Runtime > 0 && RoomTime IS NOT NULL";
     sroom_df <- mydf(sql=sqlsroom,db=sim);
     room<-median(sroom_df$room);
     nroom<-length(sroom_df$room);
 
-sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtime < 3600 and MDTime IS NOT NULL";
+sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtime < 3600 && MDTime-Time_Runtime > 0 && MDTime IS NOT NULL";
     smd_df <- mydf(sql=sqlsmd,db=sim);
     md<-median(smd_df$md);
     nmd<-length(smd_df$md);
 
-    sqlsdispo<-"SELECT DispoTime-Time_Runtime AS dispo FROM runtimes where DispoTime-Time_Runtime < 3600 and DispoTime IS NOT NULL";
+    sqlsdispo<-"SELECT DispoTime-Time_Runtime AS dispo FROM runtimes where DispoTime-Time_Runtime < 3600 && DispoTime-Time_Runtime > 0 && DispoTime IS NOT NULL";
     sdispo_df <- mydf(sql=sqlsdispo,db=sim);
     dispo<-median(sdispo_df$dispo);
     ndispo<-length(sdispo_df$dispo);
@@ -62,12 +79,12 @@ sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtim
     values<-c(triage=triage,room=room,md=md,dispo=dispo);
     nvalues<-c(triage=ntriage,room=nroom,md=nmd,dispo=ndispo);
 
-
+}
 
 # ++++++++++CONTROLS+++++++++++++++
 
     #triage
-    sqltriage<-"select Simulation,Protocol,RegTime-Time_Runtime AS triage FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where RegTime IS NOT NULL && RegTime-Time_Runtime < 3600 && Protocol = '";
+    sqltriage<-"select Simulation,Protocol,RegTime-Time_Runtime AS triage FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where RegTime IS NOT NULL && RegTime-Time_Runtime < 3600 && RegTime-Time_Runtime >0 && Protocol = '";
     endquote<-"'";
     sqltriage<-paste(sqltriage,protocol,endquote,sep='');
     triage_df<-mydf(sql=sqltriage,db=db);
@@ -78,7 +95,7 @@ sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtim
     ntriage_q25 <- as.numeric(quantile(ntriage))[2];
 
     #Room
-     sqlroom<-"select Simulation,Protocol,RoomTime-Time_Runtime AS room FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where RoomTime IS NOT NULL && RoomTime-Time_Runtime < 3600 && Protocol = '";
+     sqlroom<-"select Simulation,Protocol,RoomTime-Time_Runtime AS room FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where RoomTime IS NOT NULL && RoomTime-Time_Runtime < 3600 && RoomTime-Time_Runtime>0 &&Protocol = '";
     endquote<-"'";
     sqlroom<-paste(sqlroom,protocol,endquote,sep='');
     room_df <- mydf(sql=sqlroom, db=db);
@@ -89,7 +106,7 @@ sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtim
     nroom_q25 <- as.numeric(quantile(nroom))[2];
 
     #MD
-sqlmd<-"select Simulation,Protocol,MDTime-Time_Runtime AS md FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where MDTime IS NOT NULL && MDTime-Time_Runtime < 3600 && Protocol = '";
+sqlmd<-"select Simulation,Protocol,MDTime-Time_Runtime AS md FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where MDTime IS NOT NULL && MDTime-Time_Runtime < 3600 && MDTime-Time_Runtime > 0 && Protocol = '";
     endquote<-"'";
     sqlmd<-paste(sqlmd,protocol,endquote,sep='');
     md_df <- mydf(sql=sqlmd, db=db);
@@ -101,7 +118,7 @@ sqlmd<-"select Simulation,Protocol,MDTime-Time_Runtime AS md FROM datamine RIGHT
 
 
     #dispo
-sqldispo<-"select Simulation,Protocol,DispoTime-Time_Runtime AS dispo FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where DispoTime IS NOT NULL && DispoTime-Time_Runtime < 3600 && Protocol = '";
+sqldispo<-"select Simulation,Protocol,DispoTime-Time_Runtime AS dispo FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where DispoTime IS NOT NULL && DispoTime-Time_Runtime < 3600 && DispoTime-Time_Runtime > 0 &&Protocol = '";
     endquote<-"'";
     sqldispo<-paste(sqldispo,protocol,endquote,sep='');
     dispo_df <- mydf(sql=sqldispo, db=db);
@@ -118,6 +135,8 @@ sqldispo<-"select Simulation,Protocol,DispoTime-Time_Runtime AS dispo FROM datam
     nmedians<-c(triage=ntriage_med,room=nroom_med,md=nmd_med,dispo=ndispo_med);
     nq25<-c(triage=ntriage_q25,room=nroom_q25,md=nmd_q25,dispo=ndispo_q25);
 
+    benchmarks<-list(triage=triage_df$triage,room=room_df$room,md=md_df$md,dispo=dispo_df$dispo);
+
 #returns
     z<-(list(simulation=sim,
              medians=medians,
@@ -131,18 +150,23 @@ sqldispo<-"select Simulation,Protocol,DispoTime-Time_Runtime AS dispo FROM datam
               values=nvalues
              ));
 
+    z3<-list(protocol=protocol,
+             benchmarks=benchmarks
+             );
 
 
 
    class(z)<-'los';
-   class(z2)<-'pv';
+    class(z2)<-'pv';
+    class(z3)<-'bench';
 
-    if(rtype=='los'){
+    if(rtype=='los') {
         return(z);
-    }else{
+    } else if (rtype=='pv') {
         return(z2);
+    } else {
+        return(z3);
     }
-
 
 }
 
@@ -188,7 +212,26 @@ plot.pv <- function(z,color=TRUE){
 
 }
 
+#' @export
+plot.bench <-function(z,color=TRUE) {
+  maintitle<-paste("SurgeSim Benchmarks for Protocol:",z$protocol);
+ if(color){
+         plot_color<-'blue';
 
+    }else{
+       plot_color<-'grey';
+    }
+  boxplot(lapply(z$benchmarks,function(x) x/60),main=maintitle,ylab='Time to Benchmark / min',col=plot_color);
+
+}
+
+#' @export
+print.bench <-function(z){
+    print(paste('Protocol:',z$protocol));
+    print('Values');
+    lapply(z$benchmarks,quantile);
+
+}
 
 
 

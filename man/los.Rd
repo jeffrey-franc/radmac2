@@ -2,21 +2,21 @@
 % Please edit documentation in R/radmac2.R
 \name{los}
 \alias{los}
-\title{Calculate length of stay benchmarks for SurgeSim}
+\title{Calculate length of stay for SurgeSim Simulation Group}
 \usage{
 los(db = "medstat1_surgesim", sim, protocol)
 }
 \arguments{
-\item{db}{Main Simulation database containing datamine}
+\item{db}{Simulation database containing datamine}
 
-\item{sim}{Simulation database}
+\item{sim}{Simulation group database}
 
 \item{protocol}{Simulation protocol for comparison}
 }
 \description{
-Calculate length of stay benchmarks for SurgeSim
+Calculate length of stay for SurgeSim Simulation Group
 }
 \examples{
-z<-los(protocol='Geyserville',sim='unmert');
+z<-los(protocol='Geyserville',sim='emdm2016a');
 }
 
