@@ -33,7 +33,7 @@ triage_accuracy<-function(sim,model){
 
 }
 
-
+#' @export
 print.triage_accuracy<-function(ta){
 
   cat(paste('Simulation:',ta$simulation));
@@ -43,6 +43,7 @@ print.triage_accuracy<-function(ta){
 
 }
 
+#' @export
 plot.triage_accuracy <-function(ta,color=TRUE) {
     if(color){
         bar_color='blue';
