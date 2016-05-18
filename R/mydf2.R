@@ -36,6 +36,16 @@ mydf2<-function(sql,db=NULL,user=NULL,password=NULL,host=NULL) {
     }
 
 
+#' Write configuration object for the mydf2 function.
+#'
+#' @param user Default username.
+#' @param password Password for default user.
+#' @param host Hostname for MySQL database
+#' @param db Optional default database
+#' @return Null.  Used for its side effect of writing the mydf2config object
+#' @examples
+#' mydf2config_make(user='jeffrey',password='34tgh',host='localhost',db='foo')
+#' mydf2config_make(user='jeffrey',password='34tgh',host='localhost')
 mydf2config_make<-function(user,password,host,db=NULL) {
         mydfconfig<<-list(user=user,password=password,host=host,db=db);
 

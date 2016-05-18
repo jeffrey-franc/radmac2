@@ -1,3 +1,22 @@
+#' radmac2: Calculate and plot surge capacity metrics from SurgeSim
+#'
+#' The package provides four types of benchmark plots
+#'
+#' The package requires a configuration object mydf2config which can be written
+#' to the environment with the function mydf2config_make
+#'
+#' @references
+#' Jeffrey Michael Franc, Pier Luigi Ingrassia, Manuela Verde, Davide Colombo
+#' and Francesco Della Corte (2015). A Simple Graphical Method for Quantification
+#' of Disaster Management Surge Capacity Using Computer Simulation and Process-
+#' control Tools. Prehospital and Disaster Medicine, 30, pp 9-15.
+#'
+#' @docType package
+#' @name radmac2
+NULL
+
+
+
 los<-function(x,...){
     UseMethod('los');
 }
