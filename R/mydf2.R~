@@ -1,0 +1,24 @@
+mydf2<-function(sql,db=NULL,user=NULL,password=NULL,host=NULL) {
+    if(db==NULL | user==NULL | password==NULL | host == NULL){
+        if(!exists(mydfconfig){
+               cat('mydfconfig not found\n');
+               cat('See ?mydfconfig_make for details\n');
+               stop();
+           }
+       }
+
+
+
+  con<-RMySQL::dbConnect(MySQL(),user=***REMOVED***,password=***REMOVED***,dbname=db,host='localhost');
+  x<-dbGetQuery(con,sql);
+
+  y<-data.frame(x);
+  dbDisconnect(con);
+  return(y);
+    }
+
+
+    mydf2config_make(){
+
+
+    }

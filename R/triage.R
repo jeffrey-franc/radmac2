@@ -13,7 +13,7 @@ triage_accuracy<-function(x,...){
 triage_accuracy<-function(sim,model){
 
  sql<-'SELECT Acuity as acuity,TriageCode_NATO as nato, Triage_CTAS as ctas, Triage_START as start FROM runtimes RIGHT JOIN patient_data on runtimes.PatientNumber = patient_data.PatientNumber WHERE RegTime IS NOT NULL';
-    tc<-mydf(sql=sql,db=sim);
+    tc<-mydf2(sql=sql,db=sim);
 
  #Convert all triage codes to NATO
  tc$acnato<-tc$acuity; #create corrected acuity

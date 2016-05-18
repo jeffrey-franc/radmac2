@@ -56,23 +56,23 @@ surgesimcalc<-function(db='medstat1_surgesim',sim,protocol,rtype){
 if(!(is.null(sim))) {
 # This Sim
     sqlstriage<-"SELECT RegTime-Time_Runtime AS triage FROM runtimes where RegTime-Time_Runtime < 3600 and RegTime-Time_Runtime > 0 && Time_Min > 0 && RegTime IS NOT NULL";
-    striage_df <- mydf(sql=sqlstriage,db=sim);
+    striage_df <- mydf2(sql=sqlstriage,db=sim);
     triage<-median(striage_df$triage);
     ntriage<-length(striage_df$triage);
 
 
      sqlsroom<-"SELECT RoomTime-Time_Runtime AS room FROM runtimes where RoomTime-Time_Runtime < 3600 && RoomTime-Time_Runtime > 0 && Time_Min > 0 && RoomTime IS NOT NULL";
-    sroom_df <- mydf(sql=sqlsroom,db=sim);
+    sroom_df <- mydf2(sql=sqlsroom,db=sim);
     room<-median(sroom_df$room);
     nroom<-length(sroom_df$room);
 
 sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtime < 3600 && MDTime-Time_Runtime > 0 && Time_Min > 0 && MDTime IS NOT NULL";
-    smd_df <- mydf(sql=sqlsmd,db=sim);
+    smd_df <- mydf2(sql=sqlsmd,db=sim);
     md<-median(smd_df$md);
     nmd<-length(smd_df$md);
 
     sqlsdispo<-"SELECT DispoTime-Time_Runtime AS dispo FROM runtimes where DispoTime-Time_Runtime < 3600 && DispoTime-Time_Runtime > 0 && Time_Min > 0 && DispoTime IS NOT NULL";
-    sdispo_df <- mydf(sql=sqlsdispo,db=sim);
+    sdispo_df <- mydf2(sql=sqlsdispo,db=sim);
     dispo<-median(sdispo_df$dispo);
     ndispo<-length(sdispo_df$dispo);
 
@@ -88,7 +88,7 @@ sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtim
     sqltriage<-"select Simulation,Protocol,RegTime-Time_Runtime AS triage FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where RegTime IS NOT NULL && RegTime-Time_Runtime < 3600 && RegTime-Time_Runtime >0 && Protocol = '";
     endquote<-"'";
     sqltriage<-paste(sqltriage,protocol,endquote,sep='');
-    triage_df<-mydf(sql=sqltriage,db=db);
+    triage_df<-mydf2(sql=sqltriage,db=db);
     triage_med <-median(triage_df$triage);
     triage_q75<-as.numeric(quantile(triage_df$triage)[4]);
     ntriage<-(with(triage_df,aggregate(triage,by=list(Simulation),FUN=length))[2])[,1];
@@ -99,7 +99,7 @@ sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtim
      sqlroom<-"select Simulation,Protocol,RoomTime-Time_Runtime AS room FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where RoomTime IS NOT NULL && RoomTime-Time_Runtime < 3600 && RoomTime-Time_Runtime>0 && Time_Min > 0 && Protocol = '";
     endquote<-"'";
     sqlroom<-paste(sqlroom,protocol,endquote,sep='');
-    room_df <- mydf(sql=sqlroom, db=db);
+    room_df <- mydf2(sql=sqlroom, db=db);
     room_med <- median(room_df$room);
     room_q75<-as.numeric(quantile(room_df$room)[4]);
     nroom<-(with(room_df,aggregate(room,by=list(Simulation),FUN=length))[2])[,1];
@@ -110,7 +110,7 @@ sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtim
 sqlmd<-"select Simulation,Protocol,MDTime-Time_Runtime AS md FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where MDTime IS NOT NULL && MDTime-Time_Runtime < 3600 && MDTime-Time_Runtime > 0 && Time_Min > 0 && Protocol = '";
     endquote<-"'";
     sqlmd<-paste(sqlmd,protocol,endquote,sep='');
-    md_df <- mydf(sql=sqlmd, db=db);
+    md_df <- mydf2(sql=sqlmd, db=db);
     md_med <- median(md_df$md);
     md_q75<-as.numeric(quantile(md_df$md)[4]);
     nmd<-(with(md_df,aggregate(md,by=list(Simulation),FUN=length))[2])[,1];
@@ -122,7 +122,7 @@ sqlmd<-"select Simulation,Protocol,MDTime-Time_Runtime AS md FROM datamine RIGHT
 sqldispo<-"select Simulation,Protocol,DispoTime-Time_Runtime AS dispo FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where DispoTime IS NOT NULL && DispoTime-Time_Runtime < 3600 && DispoTime-Time_Runtime > 0 && Time_Min > 0 && Protocol = '";
     endquote<-"'";
     sqldispo<-paste(sqldispo,protocol,endquote,sep='');
-    dispo_df <- mydf(sql=sqldispo, db=db);
+    dispo_df <- mydf2(sql=sqldispo, db=db);
     dispo_med <- median(dispo_df$dispo);
     dispo_q75<-as.numeric(quantile(dispo_df$dispo)[4]);
     ndispo<-(with(dispo_df,aggregate(dispo,by=list(Simulation),FUN=length))[2])[,1];
@@ -230,14 +230,3 @@ print.bench <-function(z){
 
 }
 
-
-
-mydf<-function(sql,db='medstat1_surgesim') {
-  library(RMySQL);
-  con<-dbConnect(MySQL(),user=***REMOVED***,password=***REMOVED***,dbname=db,host='localhost');
-  x<-dbGetQuery(con,sql);
-
-  y<-data.frame(x);
-  dbDisconnect(con);
-  return(y);
-}

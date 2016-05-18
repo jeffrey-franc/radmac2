@@ -9,6 +9,7 @@ test_that('q75 greater than mean', {
               expect_gt(z$q75[3],z$medians[3])
               expect_gt(z$q75[4],z$medians[4])
           })
+
 test_that('Correct simulation', {
               expect_equal(z$simulation,'emdm2016a')
           })
