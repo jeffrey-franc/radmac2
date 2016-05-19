@@ -6,10 +6,10 @@
 #' to the environment with the function mydf2config_make
 #'
 #' @references
-#' Jeffrey Michael Franc, Pier Luigi Ingrassia, Manuela Verde, Davide Colombo
-#' and Francesco Della Corte (2015). A Simple Graphical Method for Quantification
-#' of Disaster Management Surge Capacity Using Computer Simulation and Process-
-#' control Tools. Prehospital and Disaster Medicine, 30, pp 9-15.
+#' Franc JM, Ingrassia PL, Verde M, Colombo D, Della Corte F (2015).
+#' A Simple Graphical Method for Quantification of Disaster Management Surge
+#' Capacity Using Computer Simulation and Process-control Tools.
+#' Prehospital and Disaster Medicine, 30, pp 9-15.
 #'
 #' @docType package
 #' @name radmac2
