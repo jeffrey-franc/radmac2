@@ -1,9 +1,25 @@
-#' radmac2: Calculate and plot surge capacity metrics from SurgeSim
+#' radmac2:  SurgeSim Metrics
 #'
-#' The package provides four types of benchmark plots
+#' Calculate and plot surge capacity metrics from SurgeSim simulations
+#'
+#' The package provides four types of benchmark plots:
+#'
+##' \itemize{
+##'  \item{"Length of Stay"}
+##'  \item{"Patient Volumes"}
+##'  \item{"Benchmarks"}
+##'  \item{"Triage Accuracy"}
+##' }
+
+
 #'
 #' The package requires a configuration object mydf2config which can be written
 #' to the environment with the function mydf2config_make
+#'
+#' The package requires the SurgeSim Datamine MySQL table, which is included in
+#' the surgesim database required for the simulation.  The database is updated
+#' after each simulation so it may be necessary to obtain the most current
+#' version
 #'
 #' @references
 #' Franc JM, Ingrassia PL, Verde M, Colombo D, Della Corte F (2015).
@@ -17,64 +33,67 @@ NULL
 
 
 
-los<-function(x,...){
-    UseMethod('los');
+los <- function(x, ...){
+  UseMethod("los");
 }
 
 pv<-function(x,...){
-    UseMethod('pv');
+  UseMethod("pv");
 }
 
-bench<-function(x,...){
-    UseMethod('bench');
+bench<-function(x, ...){
+  UseMethod("bench");
 }
 
 
 
-   #' Calculate length of stay for SurgeSim Simulation Group
-    #'
-    #' @param db Simulation database containing datamine
-    #' @param sim Simulation group database
-    #' @param protocol Simulation protocol for comparison
-    #' @examples
-  #' z<-los(protocol='Geyserville',sim='emdm2016a');
-  #' @export
+#' Calculate length of stay for SurgeSim Simulation Group
+#'
+#' @param db Simulation database containing datamine
+#' @param sim Simulation group database
+#' @param protocol Simulation protocol for comparison
+#' @examples
+#' z<-los(protocol='Geyserville',sim='emdm2016a');
+#' @export
 los<-function(db='medstat1_surgesim',sim,protocol){
-
-    surgesimcalc(db=db,sim=sim,protocol=protocol,rtype='los');
+  surgesimcalc(db=db,sim=sim,protocol=protocol,rtype='los');
 }
 
 
- #' Calculate patient volume benchmarks for SurgeSim
-    #'
-    #' @param db Simulation database containing datamine
-    #' @param sim Simulation group database
-    #' @param protocol Simulation protocol for comparison
-    #' @examples
-  #' z<-pv(protocol='Geyserville',sim='emdm2016a');
-  #' @export
+#' Calculate patient volume benchmarks for SurgeSim
+#'
+#' @param db Simulation database containing datamine
+#' @param sim Simulation group database
+#' @param protocol Simulation protocol for comparison
+#' @examples
+#' z<-pv(protocol='Geyserville',sim='emdm2016a');
+#' @export
 pv<-function(db='medstat1_surgesim',sim,protocol){
-    surgesimcalc(db=db,sim=sim,protocol=protocol,rtype='pv');
+  surgesimcalc(db=db,sim=sim,protocol=protocol,rtype='pv');
 }
 
 #' Calculate patient volume stay benchmarks for SurgeSim
-    #'
-    #' @param db Simulation database containing datamine
-    #' @param protocol Simulation protocol for benchmarks
-    #' @examples
-  #' z<-bench(protocol='Geyserville');
-  #' @export
+#'
+#' @param db Simulation database containing datamine
+#' @param protocol Simulation protocol for benchmarks
+#' @examples
+#' z<-bench(protocol='Geyserville');
+#' @export
 bench<-function(db='medstat1_surgesim',protocol){
-    surgesimcalc(db=db,sim=NULL,protocol=protocol,rtype='bench');
+  surgesimcalc(db=db,sim=NULL,protocol=protocol,rtype='bench');
 }
 
 
 surgesimcalc<-function(db='medstat1_surgesim',sim,protocol,rtype){
 
-
-if(!(is.null(sim))) {
-# This Sim
-    sqlstriage<-"SELECT RegTime-Time_Runtime AS triage FROM runtimes where RegTime-Time_Runtime < 3600 and RegTime-Time_Runtime > 0 && Time_Min > 0 && RegTime IS NOT NULL";
+  if(!(is.null(sim))) {
+  # This Sim
+  sqlstriage<-"SELECT RegTime-Time_Runtime
+    AS triage FROM runtimes
+    where RegTime-Time_Runtime < 3600 and
+    RegTime-Time_Runtime > 0 &&
+    Time_Min > 0
+    && RegTime IS NOT NULL";
     striage_df <- mydf2(sql=sqlstriage,db=sim);
     triage<-median(striage_df$triage);
     ntriage<-length(striage_df$triage);

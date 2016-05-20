@@ -4,18 +4,32 @@
 \name{radmac2}
 \alias{radmac2}
 \alias{radmac2-package}
-\title{radmac2: Calculate and plot surge capacity metrics from SurgeSim}
+\title{radmac2:  SurgeSim Metrics}
 \description{
-The package provides four types of benchmark plots
+Calculate and plot surge capacity metrics from SurgeSim
 }
 \details{
+The package provides four types of benchmark plots:
+
+\itemize{
+ \item{"Length of Stay"}
+ \item{"Patient Volumes"}
+ \item{"Benchmarks"}
+ \item{"Triage Accuracy"}
+}
+
 The package requires a configuration object mydf2config which can be written
 to the environment with the function mydf2config_make
+
+The package requires the SurgeSim Datamine MySQL table, which is included in
+the surgesim database required for the simulation.  The database is updated
+after each simulation so it may be necessary to obtain the most current
+version
 }
 \references{
-Jeffrey Michael Franc, Pier Luigi Ingrassia, Manuela Verde, Davide Colombo
-and Francesco Della Corte (2015). A Simple Graphical Method for Quantification
-of Disaster Management Surge Capacity Using Computer Simulation and Process-
-control Tools. Prehospital and Disaster Medicine, 30, pp 9-15.
+Franc JM, Ingrassia PL, Verde M, Colombo D, Della Corte F (2015).
+A Simple Graphical Method for Quantification of Disaster Management Surge
+Capacity Using Computer Simulation and Process-control Tools.
+Prehospital and Disaster Medicine, 30, pp 9-15.
 }
 
