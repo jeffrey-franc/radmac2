@@ -6,7 +6,7 @@
 \alias{radmac2-package}
 \title{radmac2:  SurgeSim Metrics}
 \description{
-Calculate and plot surge capacity metrics from SurgeSim
+Calculate and plot surge capacity metrics from SurgeSim simulations
 }
 \details{
 The package provides four types of benchmark plots:

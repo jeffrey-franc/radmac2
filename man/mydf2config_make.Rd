@@ -4,7 +4,7 @@
 \alias{mydf2config_make}
 \title{Write configuration object for the mydf2 function.}
 \usage{
-mydf2config_make(user, password, host, db = NULL)
+mydf2config_make(user, password, host, db = NULL, saveconfig = TRUE)
 }
 \arguments{
 \item{user}{Default username.}
@@ -14,15 +14,19 @@ mydf2config_make(user, password, host, db = NULL)
 \item{host}{Hostname for MySQL database}
 
 \item{db}{Optional default database}
+
+\item{saveconfig}{If TRUE saves the data object to the current working directory}
 }
 \value{
 Null.  Used for its side effect of writing the mydf2config object
 }
 \description{
-Write configuration object for the mydf2 function.
+Radmac2 requires that the mydfconfig object be either available in the current R workspace as a list
+or in the current working directory saved as 'mydfconfig.Rd'.  By default, this function creates both the
+object in the current workspace and the saved object in the current working directory.
 }
 \examples{
 mydf2config_make(user='jeffrey',password='34tgh',host='localhost',db='foo')
-mydf2config_make(user='jeffrey',password='34tgh',host='localhost')
+mydf2config_make(user='jeffrey',password='34tgh',host='localhost',saveconfig=FALSE)
 }
 
