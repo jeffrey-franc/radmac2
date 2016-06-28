@@ -3,7 +3,7 @@ run <- function(sim,model) {
   #http://localhost/cgi-bin/R/triageaccuracy.png?sim=emdm2016a&model=start
   #requires mydfconfig.Rd in the /var/FastRWeb/tmp directory
     library('radmac2');
-    z<-radmac2::triage_accuracy(sim=sim,model=model,db=db);
+    z<-radmac2::triage_accuracy(sim=sim,model=model);
     p <- WebPlot(400, 400)
     plot(z);
     return(p);
