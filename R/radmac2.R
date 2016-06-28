@@ -123,7 +123,7 @@ sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtim
 # ++++++++++CONTROLS+++++++++++++++
 
     #triage
-    sqltriage<-"select Simulation,Protocol,RegTime-Time_Runtime AS triage FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where RegTime IS NOT NULL && RegTime-Time_Runtime < 3600 && RegTime-Time_Runtime >0 && Protocol = '";
+    sqltriage<-"select Simulation,Protocol,RegTime-Time_Runtime AS triage FROM datamine RIGHT join stat_toc ON datamine.Simulation=stat_toc.DBName where RegTime IS NOT NULL && RegTime-Time_Runtime < 3600 && RegTime-Time_Runtime >0 && Protocol = '";
     endquote<-"'";
     sqltriage<-paste(sqltriage,protocol,endquote,sep='');
     triage_df<-mydf2(sql=sqltriage,db=db);
@@ -134,7 +134,7 @@ sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtim
     ntriage_q25 <- as.numeric(quantile(ntriage))[2];
 
     #Room
-     sqlroom<-"select Simulation,Protocol,RoomTime-Time_Runtime AS room FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where RoomTime IS NOT NULL && RoomTime-Time_Runtime < 3600 && RoomTime-Time_Runtime>0 && Time_Min > 0 && Protocol = '";
+     sqlroom<-"select Simulation,Protocol,RoomTime-Time_Runtime AS room FROM datamine RIGHT join stat_toc ON datamine.Simulation=stat_toc.DBName where RoomTime IS NOT NULL && RoomTime-Time_Runtime < 3600 && RoomTime-Time_Runtime>0 && Time_Min > 0 && Protocol = '";
     endquote<-"'";
     sqlroom<-paste(sqlroom,protocol,endquote,sep='');
     room_df <- mydf2(sql=sqlroom, db=db);
@@ -145,7 +145,7 @@ sqlsmd<-"SELECT MDTime-Time_Runtime AS md FROM runtimes where MDTime-Time_Runtim
     nroom_q25 <- as.numeric(quantile(nroom))[2];
 
     #MD
-sqlmd<-"select Simulation,Protocol,MDTime-Time_Runtime AS md FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where MDTime IS NOT NULL && MDTime-Time_Runtime < 3600 && MDTime-Time_Runtime > 0 && Time_Min > 0 && Protocol = '";
+sqlmd<-"select Simulation,Protocol,MDTime-Time_Runtime AS md FROM datamine RIGHT join stat_toc ON datamine.Simulation=stat_toc.DBName where MDTime IS NOT NULL && MDTime-Time_Runtime < 3600 && MDTime-Time_Runtime > 0 && Time_Min > 0 && Protocol = '";
     endquote<-"'";
     sqlmd<-paste(sqlmd,protocol,endquote,sep='');
     md_df <- mydf2(sql=sqlmd, db=db);
@@ -157,7 +157,7 @@ sqlmd<-"select Simulation,Protocol,MDTime-Time_Runtime AS md FROM datamine RIGHT
 
 
     #dispo
-sqldispo<-"select Simulation,Protocol,DispoTime-Time_Runtime AS dispo FROM datamine RIGHT join stat_TOC ON datamine.Simulation=stat_toc.DBName where DispoTime IS NOT NULL && DispoTime-Time_Runtime < 3600 && DispoTime-Time_Runtime > 0 && Time_Min > 0 && Protocol = '";
+sqldispo<-"select Simulation,Protocol,DispoTime-Time_Runtime AS dispo FROM datamine RIGHT join stat_toc ON datamine.Simulation=stat_toc.DBName where DispoTime IS NOT NULL && DispoTime-Time_Runtime < 3600 && DispoTime-Time_Runtime > 0 && Time_Min > 0 && Protocol = '";
     endquote<-"'";
     sqldispo<-paste(sqldispo,protocol,endquote,sep='');
     dispo_df <- mydf2(sql=sqldispo, db=db);
